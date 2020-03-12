@@ -1,0 +1,33 @@
+version: '3'
+services:
+    wordpress:
+        container_name: "wordpress"
+        build: .
+        restart: always
+        depends_on:
+            - db
+        environment:
+           WORDPRESS_DB_HOST: db
+           WORDPRESS_DB_USER: admin
+           WORDPRESS_DB_PASSWORD: password
+           WORDPRESS_DB_NAME: wordpress
+           WORDPRESS_CONFIG_EXTRA: |
+            /* Overwrite the default theme  */
+            define('WP_DEFAULT_THEME', 'twentytwenty');
+        volumes:
+            - ./web:/var/www/html:rw
+            - ./wp-content:/var/www/html/wp-content:rw
+        ports:
+            - 80:80
+
+    db:
+      container_name: "db"
+      image: mysql:5.7
+      restart: always
+      environment:
+        MYSQL_DATABASE: wordpress
+        MYSQL_USER: admin
+        MYSQL_PASSWORD: password
+        MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      volumes:
+          - ./db:/var/lib/mysql
